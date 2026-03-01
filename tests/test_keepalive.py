@@ -299,7 +299,7 @@ class TestServerKeepAlive(unittest.TestCase):
                 # If we get response, connection was closed and this is new connection
                 # or server accepted one more request
                 self.assertTrue(len(response6) == 0 or b"200 OK" in response6)
-            except (BrokenPipeError, ConnectionResetError):
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
                 # Expected - connection was closed after 5 requests
                 pass
 

@@ -12,7 +12,21 @@ import time
 import tempfile
 import os
 import select
+import shutil
 from uhttp import server as uhttp_server
+
+
+def safe_rmtree(path, retries=3):
+    """Remove directory tree with retry for Windows file locking"""
+    for i in range(retries):
+        try:
+            shutil.rmtree(path)
+            return
+        except PermissionError:
+            if i < retries - 1:
+                time.sleep(0.2)
+    # Last attempt - ignore errors
+    shutil.rmtree(path, ignore_errors=True)
 
 
 class TestRespondFileRace(unittest.TestCase):
@@ -71,8 +85,7 @@ class TestRespondFileRace(unittest.TestCase):
         finally:
             client_sock.close()
             server.close()
-            os.remove(test_file)
-            os.rmdir(temp_dir)
+            safe_rmtree(temp_dir)
 
     def test_process_request_returns_false_while_response_pending(self):
         """
@@ -144,8 +157,7 @@ class TestRespondFileRace(unittest.TestCase):
         finally:
             client_sock.close()
             server.close()
-            os.remove(large_file)
-            os.rmdir(temp_dir)
+            safe_rmtree(temp_dir)
 
 
 if __name__ == '__main__':

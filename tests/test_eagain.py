@@ -7,14 +7,16 @@ import socket
 import errno
 import time
 import select
+import sys
 from uhttp import server as uhttp_server
 
 
 class TestEAGAIN(unittest.TestCase):
     """Test EAGAIN handling"""
 
-    PORT = 9995
+    PORT = 9957
 
+    @unittest.skipIf(sys.platform == 'win32', "Windows handles non-blocking sockets differently")
     def test_eagain_on_read_no_data(self):
         """
         Test EAGAIN when reading from socket with no data available.

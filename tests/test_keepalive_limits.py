@@ -103,7 +103,7 @@ class TestKeepAliveMaxRequests(unittest.TestCase):
 
                     time.sleep(0.1)
 
-                except (BrokenPipeError, ConnectionResetError):
+                except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
                     # Expected after max_requests reached
                     if i == 3:  # 4th request should fail
                         break
