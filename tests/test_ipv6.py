@@ -12,17 +12,15 @@ from uhttp import server as uhttp_server
 class TestIPv6Server(unittest.TestCase):
     """Test suite for IPv6 server"""
 
-    PORT = 9990
-
     def test_ipv6_socket_creation(self):
         """Test that IPv6 address creates AF_INET6 socket"""
-        server = uhttp_server.HttpServer(address='::', port=self.PORT)
+        server = uhttp_server.HttpServer(address='::', port=0)
         self.assertEqual(server.socket.family, socket.AF_INET6)
         server.close()
 
     def test_ipv4_socket_creation(self):
         """Test that IPv4 address creates AF_INET socket"""
-        server = uhttp_server.HttpServer(address='0.0.0.0', port=self.PORT + 1)
+        server = uhttp_server.HttpServer(address='0.0.0.0', port=0)
         self.assertEqual(server.socket.family, socket.AF_INET)
         server.close()
 
@@ -45,10 +43,9 @@ class TestIPv6Server(unittest.TestCase):
             ('::', socket.AF_INET6),
             ('0.0.0.0', socket.AF_INET),
         ]
-        for i, (address, expected_family) in enumerate(test_cases):
+        for address, expected_family in test_cases:
             try:
-                server = uhttp_server.HttpServer(
-                    address=address, port=self.PORT + 10 + i)
+                server = uhttp_server.HttpServer(address=address, port=0)
                 self.assertEqual(
                     server.socket.family, expected_family,
                     f"Address {address} should create {expected_family}")
@@ -64,7 +61,7 @@ class TestDualStack(unittest.TestCase):
 
     server = None
     server_thread = None
-    PORT = 9995
+    PORT = 9975
 
     @classmethod
     def setUpClass(cls):
