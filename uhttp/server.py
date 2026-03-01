@@ -739,7 +739,7 @@ class HttpConnection():
             except OSError:
                 pass
             self._socket = None
-            self._send_buffer[:] = b''
+            self._send_buffer = bytearray()
 
     def headers_get(self, key, default=None):
         """Return value from headers by key, or default if key not found"""
@@ -847,6 +847,7 @@ class HttpConnection():
         # Check if body is complete
         total = self._bytes_received + len(self._buffer)
         if self.content_length and total >= self.content_length:
+            self._close_body_file()  # Close file before EVENT_COMPLETE
             self._body_complete = True
             self._event = EVENT_COMPLETE
             self._requests_count += 1
